@@ -3,23 +3,64 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My first site</title>
+  <title>Wizzard Development Plan Demo</title>
+  <meta name="description" content="A demo of the Wizzard Personal Development Plan, with a made-up employee.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800;900&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <p class="eyebrow">It's alive</p>
-    <h1>Hello, world.</h1>
-    <p>If you can read this on a real web address, your site is deployed. Now open Claude Code and ask it to turn this page into something of your own.</p>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="mast">
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand">
+          <svg class="logo" viewBox="0 0 48 34" aria-hidden="true" focusable="false">
+            <path d="M5 6 L17 28 M17 6 L29 28" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <circle cx="38" cy="6" r="5" fill="#FF2EA6"/>
+          </svg>
+          <span class="wordmark">WIZZARD</span>
+          <span class="product">Personal Development Plan</span>
+        </div>
+        <div class="viewswitch" role="group" aria-label="Choose whose view to see">
+          <button type="button" data-view="employee" aria-pressed="true">Employee view</button>
+          <button type="button" data-view="manager" aria-pressed="false">Manager view</button>
+        </div>
+      </div>
+
+      <div class="who">
+        <p class="kicker" id="who-kicker"></p>
+        <h1 id="who-name"></h1>
+        <p class="meta" id="who-meta"></p>
+      </div>
+
+      <nav class="tabs" aria-label="Plan sections">
+        <a href="#overview">Overview</a>
+        <a href="#goals">Goals</a>
+        <a href="#competencies">Skills &amp; Behaviours</a>
+        <a href="#role">Job description</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <div class="viewnote" id="viewnote" aria-live="polite"></div>
+    <section id="s-overview" aria-labelledby="h-overview"></section>
+    <section id="s-goals" aria-labelledby="h-goals" hidden></section>
+    <section id="s-competencies" aria-labelledby="h-competencies" hidden></section>
+    <section id="s-role" aria-labelledby="h-role" hidden></section>
   </main>
 
   <footer>
-    Training exercise. Not a real product, and all data is made up.
+    <div class="wrap foot">
+      <p>Training exercise. Not a real product, and all data is made up.</p>
+      <p>Changes save in this browser only. <button type="button" class="linkbtn" id="reset">Reset the demo</button></p>
+    </div>
   </footer>
 
+  <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
