@@ -3,7 +3,7 @@
 (function () {
   "use strict";
 
-  const STORE_KEY = "wizzard-pdp-demo-v1";
+  const STORE_KEY = "wizzard-pdp-demo-v2";
   const VIEW_KEY = "wizzard-pdp-demo-view";
   const SECTIONS = ["overview", "goals", "competencies", "role"];
 

@@ -131,11 +131,11 @@ const JOB_DESCRIPTION = {
 // ---- The made-up demo employee ----
 const DEMO_PLAN = {
   profile: {
-    name: "Sam Rivers",
-    firstName: "Sam",
+    name: "Penny Wright",
+    firstName: "Penny",
     role: "Medical Writer",
     level: 0,
-    manager: "Jordan Ellis",
+    manager: "Dee Adline",
     managerTitle: "Senior Medical Writer",
     startDate: "2024-03-04",
     year: 2027
@@ -165,7 +165,7 @@ const DEMO_PLAN = {
       link: "sk1",
       specific: "Own the scientific content for one symposium, from storyboard to final slides.",
       measurable: "Content approved first time through medical review, and positive client feedback.",
-      achievable: "Jordan to review drafts weekly; time protected in the resource plan.",
+      achievable: "Dee to review drafts weekly; time protected in the resource plan.",
       relevant: "Builds client confidence and is a key step towards Senior Medical Writer.",
       deadline: "2027-06-30",
       status: "In progress",
@@ -197,5 +197,5 @@ const DEMO_PLAN = {
       mgrNote: "Lovely work, and great feedback from the graduates."
     }
   ],
-  privateNotes: "Talk to the Scientific Lead about Sam joining the next pitch. Ready to start thinking about a Senior Medical Writer path in 12–18 months."
+  privateNotes: "Talk to the Scientific Lead about Penny joining the next pitch. Ready to start thinking about a Senior Medical Writer path in 12–18 months."
 };
