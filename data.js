@@ -197,5 +197,47 @@ const DEMO_PLAN = {
       mgrNote: "Lovely work, and great feedback from the graduates."
     }
   ],
-  privateNotes: "Talk to the Scientific Lead about Penny joining the next pitch. Ready to start thinking about a Senior Medical Writer path in 12–18 months."
+  privateNotes: "Talk to the Scientific Lead about Penny joining the next pitch. Ready to start thinking about a Senior Medical Writer path in 12–18 months.",
+
+  // Monthly 1:1s. Both people can add to these. Months not listed are empty.
+  checkins: {
+    January: {
+      summary: "Talked through goals for the year. Penny wants more client-facing work and to get involved in a pitch. Agreed the symposium is a great stretch goal.",
+      actions: "Dee to confirm Penny as content lead for the symposium.\nPenny to draft SMART goals before February's 1:1."
+    },
+    February: {
+      summary: "Storyboard signed off by the client first time. Workload heavy with two launches overlapping, but Penny kept everything on track. Discussed flagging pressure earlier.",
+      actions: "Penny to raise workload concerns at the Monday stand-up.\nDee to protect symposium time in the resource plan."
+    },
+    March: {
+      summary: "Reference-checking masterclass went really well, with eight people there. Penny shared the new citation tool demo for the Wizzard goal.",
+      actions: "Penny to add the checklist to the shared drive.\nDee to put Penny forward for the next respiratory pitch."
+    }
+  },
+
+  // Deliverables and learning: filled in by the employee. Clients are made up.
+  deliverables: [
+    { project: "Congress symposium storyboard and slide deck", client: "Northwind Therapeutics", feedback: "Led the scientific content. Client approved the storyboard first time." },
+    { project: "Disease awareness patient leaflet", client: "Bramble Health", feedback: "Wrote and referenced the copy. Praised for making complex science easy to follow." },
+    { project: "MSL training module on new trial data", client: "Northwind Therapeutics", feedback: "Drafted three of five sections. Medical reviewer said it needed very few changes." }
+  ],
+  training: [
+    { name: "Codes of practice refresher", type: "Internal", date: "2027-01-20", outcomes: "Feel more confident spotting claims that need extra referencing." },
+    { name: "Writing for patient audiences workshop", type: "External", date: "2027-02-14", outcomes: "Used the plain-language checklist on the patient leaflet." },
+    { name: "Ran: reference-checking masterclass", type: "Internal", date: "2027-03-18", outcomes: "Shared my checklist with newer writers. Now on the shared drive." }
+  ],
+
+  // Year in Review: reflections from the employee, a summary from the manager, and sign-off from both.
+  review: {
+    date: "2027-12-08",
+    accomplishments: "Led the scientific content for my first congress symposium.\nRan a masterclass for the newer writers.",
+    learnings: "Ask for help earlier when two deadlines collide. People are happy to help, and the work is better for it.",
+    highlights: "Seeing the symposium slides on the big screen.",
+    lowlights: "February's double launch was a stretch. I'd plan the overlap differently next time.",
+    summary: "",
+    mgrSummary: "Penny has had a brilliant year. She stepped up to lead a symposium's content, earned clients' trust and is already helping others grow. Next year: build on this with pitch experience and start working towards Senior Medical Writer.",
+    feedback360: "Colleagues describe Penny as calm, generous with her time and a careful, accurate writer. Some would like to hear more of her ideas in creative reviews.",
+    empSigned: "",
+    mgrSigned: ""
+  }
 };

@@ -218,6 +218,56 @@ textarea:hover, input:hover, select:hover { border-color: var(--slate); }
 .ladder li.me { background: var(--navy); color: #fff; font-weight: 700; }
 .ladder li.me .muted { color: var(--on-navy-muted); }
 
+
+/* Shared bits for the new sections */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ro-label { margin: 14px 0 6px; font-weight: 600; font-size: 13px; color: var(--navy); }
+.navy .ro-label, .feature .ro-label { color: #fff; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.card-head .who-label { margin: 0; font-weight: 500; }
+.btn { border: 1px solid var(--line); background: var(--paper); color: var(--navy); padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 12px; }
+.btn:hover { border-color: var(--navy); }
+.btn.primary { background: var(--pink); border-color: var(--pink); color: var(--navy); margin-top: 0; }
+.btn.primary:hover { filter: brightness(1.05); }
+
+/* 1:1 Tracker */
+.stats-inline { margin-bottom: 16px; font-size: 15px; }
+.stats-inline b { font-family: var(--heading); font-weight: 900; font-size: 22px; color: var(--pink-ink); margin-right: 4px; }
+.months { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+details.month { border-top: 1px solid var(--line); }
+details.month:first-child { border-top: 0; }
+details.month summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 24px; font-weight: 700; color: var(--navy); }
+details.month summary::-webkit-details-marker { display: none; }
+details.month summary::after { content: "+"; font-family: var(--heading); font-size: 20px; color: var(--pink-ink); margin-left: 8px; }
+details.month[open] summary::after { content: "\2212"; }
+details.month summary .filled { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+details.month[open] summary { background: var(--wash); }
+.month-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; padding: 0 24px 20px; }
+
+/* Deliverables & Learning tables */
+.tbl-wrap { overflow-x: auto; }
+table.rows { width: 100%; border-collapse: collapse; margin-top: 6px; }
+table.rows th { text-align: left; font-size: 13px; font-weight: 700; color: var(--navy); padding: 8px; border-bottom: 2px solid var(--pink); }
+table.rows td { padding: 8px; vertical-align: top; border-bottom: 1px solid var(--line); }
+table.rows td textarea { min-height: 44px; }
+table.rows .ro { border: 0; padding: 4px 0; background: transparent; min-height: 0; }
+table.rows td.x, table.rows th.x { width: 40px; }
+.x button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 22px; line-height: 1; padding: 8px; border-radius: 6px; }
+.x button:hover { color: var(--pink-ink); background: var(--pink-wash); }
+
+/* Year in Review */
+.review-date { max-width: 320px; }
+.review-date .ro-label, .review-date label.f { margin-top: 0; }
+.refl { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.refl .card + .card { margin-top: 0; }
+.refl .card > :first-child { margin-top: 0; }
+.sign { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.signbox { background: rgba(255,255,255,.1); border-radius: 12px; padding: 14px 16px; }
+.signbox h4 { color: #fff; margin-bottom: 8px; }
+.signbox .muted { color: var(--on-navy-muted); }
+.signed { margin: 0 0 4px; font-weight: 700; }
+.signbox .linkbtn { color: #fff; }
+
 /* Footer */
 footer { border-top: 1px solid var(--line); background: var(--paper); }
 .foot { display: flex; justify-content: space-between; gap: 8px 24px; flex-wrap: wrap; padding-top: 18px; padding-bottom: 18px; font-size: 13px; color: var(--muted); }
@@ -230,6 +280,14 @@ footer { border-top: 1px solid var(--line); background: var(--paper); }
 }
 @media (max-width: 680px) {
   .wrap { padding: 0 16px; }
+  .month-body, .refl, .sign { grid-template-columns: 1fr; }
+  details.month summary, .month-body { padding-left: 16px; padding-right: 16px; }
+  table.rows thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.rows, table.rows tbody, table.rows tr, table.rows td { display: block; width: auto !important; }
+  table.rows tr { border-bottom: 2px solid var(--line); padding: 8px 0; position: relative; }
+  table.rows td { border: 0; padding: 4px 0; }
+  table.rows td[data-label]::before { content: attr(data-label); display: block; font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  table.rows td.x { position: absolute; top: 0; right: 0; }
   .desc, .rate, .looks, .facts, .wgoal-mine { grid-template-columns: 1fr; }
   .rate > div + div { border-left: 0; border-top: 1px solid var(--line); }
   .chart-row, .scale-head { grid-template-columns: 1fr; gap: 4px; }
