@@ -4,15 +4,33 @@ Claude reads this file at the start of every session. It's your project's standi
 
 ## ✏️ About this project
 
-- **What we're building:** (one or two sentences, e.g. "A one-page microsite for a fictional congress symposium" or "A simple tracker for my professional development goals")
-- **Who it's for:** (who will use it, and on what device)
-- **What "done" looks like today:** (the smallest version you'd be happy to show the group at 12:30)
+- **What we're building:** A public **demo** of the Wizzard Personal Development Plan dashboard. It shows how one consistent development framework works for one made-up member of the Scientific Services team. It's a showcase, not the real tool. Real plans live in a private claude.ai page shared only with each employee and their manager, and they never come here.
+- **Who it's for:** Bootcamp colleagues opening the link on a desktop or laptop at home. It should still work on a phone.
+- **What "done" looks like today:** One made-up employee's plan (for example, a fictional Medical Writer) with:
+  - a profile: name, role, framework level, line manager and start date;
+  - the skills and behaviours rated on their scales (below);
+  - a few goals;
+  - a switch between **Employee view** and **Manager view**, so people can see who fills in what.
+
+## ✏️ The framework (approved to show publicly)
+
+Aaron has agreed that the real Wizzard framework, including the Scientific Services job descriptions, can appear on this public site. The employee and everything about them must still be made up.
+
+- **Skills (4), rated 1–9** in three bands: **Improving** (1–3), **Expected** (4–6) and **Advanced** (7–9). The skills are Stakeholder engagement, Delivery and ownership, Quality and craft, and Contribution to Wizzard's growth. Each skill has a descriptor at four levels: Junior, Mid-Level, Senior and Director.
+- **Behaviours (6), rated Developing, Consistent or Role model.** The behaviours are Curious and always learning, Collaborative, Clear and honest, Positive and resilient, Brave with ideas, and Helps others grow. Each one has a one-line definition and three "what it looks like" examples.
+- **Roles and levels:** Graduate, Associate and Medical Writer are Junior. Senior Medical Writer is Mid-Level. Principal Medical Writer and Scientific Lead are Senior. Director of Scientific Services is Director.
+- **Goals** follow the SMART format (Specific, Measurable, Achievable, Relevant, Time-bound), and each goal links to a skill or behaviour.
+- **Source:** the full wording, descriptors and job descriptions come from Aaron's private Personal Development Plan page on claude.ai. Ask Aaron for the link when you need the exact text. Never copy any person's data or notes from it, only the framework and job descriptions.
 
 ## ✏️ Look and feel
 
-- **Brand:** (e.g. Wizzard: Inter for body text, Montserrat for headings; or a fictional client's colours)
-- **Tone:** (e.g. clear, warm, scientific but not stuffy)
-- **Reference:** (a site you like, or "clean and simple")
+- **Brand:** Wizzard's new 2026 brand.
+  - Fonts: **Inter** (Black or ExtraBold) for headings and **Montserrat** for body text.
+  - Colours: navy `#041E4B`, hot pink `#FF2EA6` for highlights, and a pink → violet → blue gradient (about `#FF2EA6` → `#8A12D8` → `#3D06F0` → `#4F86F7`) used sparingly as a feature accent. Backgrounds are off-white `#F7F8F8` and white, and text is `#333333`.
+  - Style: big bold headlines with one or two words in pink, a short pink rule under headings, and navy cards with rounded corners.
+  - Logo: don't copy the real logo file. Draw a simple "W" mark in SVG if one is needed.
+- **Tone:** Warm and encouraging, like a good manager. Talk to the employee as "you", celebrate progress and frame gaps as next steps.
+- **Reference:** the Wizzard credentials deck (Sept 2026) for the brand, and the private Personal Development Plan page for structure and content.
 
 ## About me
 
@@ -28,7 +46,7 @@ I'm not a developer. Explain what you're doing in plain English, keep explanatio
 
 ### Data and safety
 - This site is public. Anyone with the link can see it, and the code is on GitHub.
-- Use made-up data only. Never add real client, product, patient or colleague information, even if I paste it in by mistake. If I do, stop and point it out.
+- Use made-up data only. Never add real client, product, patient or colleague information, even if I paste it in by mistake. If I do, stop and point it out. The one exception is the Wizzard framework and job descriptions described above, which are approved to show. No real person's ratings, goals, notes or appraisal details ever go here.
 - Never add passwords, API keys or other secrets.
 - Keep the footer line that says this is a training exercise.
 
