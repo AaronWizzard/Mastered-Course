@@ -413,7 +413,7 @@
     return `<div class="signbox${signed ? " done" : ""}"><h4>${esc(who)} <span style="font-weight:500;opacity:.8">(${role})</span></h4>${inner}</div>`;
   }
 
-  // The employee sees a "brewing" message until four weeks before the review meeting.
+  // The employee sees a holding message until four weeks before the review meeting.
   const OPEN_DAYS_BEFORE = 28;
   const DAY = 24 * 60 * 60 * 1000;
   function todayMidnight() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
@@ -444,14 +444,14 @@
           <circle cx="30" cy="96" r="3" fill="#fff" opacity=".7"/><circle cx="44" cy="106" r="2" fill="#fff" opacity=".6"/><circle cx="18" cy="84" r="2.5" fill="#fff" opacity=".6"/>
         </svg>
         <div>
-          <p class="comp-kicker">Your Year in Review is brewing</p>
-          <h3>Something magical is on its way, ${esc(pr.firstName)}</h3>
-          <p>We're busy conjuring up your year: stirring in your goals, your 1:1s and every sprinkle of brilliance from the last twelve months. A spell this good can't be rushed.</p>
+          <p class="comp-kicker">Year in Review</p>
+          <h3>Your Year in Review is on its way, ${esc(pr.firstName)}</h3>
+          <p>We're pulling your year together: your goals, your 1:1s and everything you've achieved over the last twelve months.</p>
           ${opens ? `
-            <div class="brew-count"><b>${days}</b><span>${days === 1 ? "day" : "days"} until the spell is ready</span></div>
+            <div class="brew-count"><b>${days}</b><span>${days === 1 ? "day" : "days"} to go</span></div>
             <p>Your review meeting with ${esc(pr.manager)} is on <strong>${formatDate(plan.review.date)}</strong>. Your Year in Review will appear here on <strong>${formatDate(isoOf(opens))}</strong>, about four weeks before, with plenty of time to add your own reflections.</p>`
           : `<p>Your review meeting hasn't been booked yet. Once ${esc(pr.manager)} sets the date, a countdown will appear here.</p>`}
-          <p class="brew-tip">In the meantime, keep your <a href="#checkins">1:1 Tracker</a> and <a href="#work">Deliverables &amp; Learning</a> up to date. They're the secret ingredients.</p>
+          <p class="brew-tip">In the meantime, keep your <a href="#checkins">1:1 Tracker</a> and <a href="#work">Deliverables &amp; Learning</a> up to date. They'll make your review much easier to write.</p>
         </div>
       </div>`;
   }
@@ -466,10 +466,10 @@
     }
     const opens = reviewOpensOn();
     const mgrNote = !isMgr() ? "" : !opens
-      ? `<p class="muted small" style="margin:8px 0 0">Until you set a date, ${esc(pr.firstName)} sees a "brewing" message instead of the review.</p>`
+      ? `<p class="muted small" style="margin:8px 0 0">Until you set a date, ${esc(pr.firstName)} sees a holding message instead of the review.</p>`
       : reviewIsOpen()
         ? `<p class="small" style="margin:8px 0 0"><strong>${esc(pr.firstName)} can now see this review.</strong> It opened on ${formatDate(isoOf(opens))}, four weeks before the meeting.</p>`
-        : `<p class="small" style="margin:8px 0 0">🔮 ${esc(pr.firstName)} sees a "brewing" message until <strong>${formatDate(isoOf(opens))}</strong>, four weeks before the meeting, so you have time to prepare. <span class="muted">Demo tip: pick a date within four weeks of today, then switch to Employee view to see it open.</span></p>`;
+        : `<p class="small" style="margin:8px 0 0">${esc(pr.firstName)} sees a holding message until <strong>${formatDate(isoOf(opens))}</strong>, four weeks before the meeting, so you have time to prepare. <span class="muted">Demo tip: pick a date within four weeks of today, then switch to Employee view to see it open.</span></p>`;
     document.getElementById("s-review").innerHTML = `
       <h2 id="h-review">Year in <span class="hl">review</span></h2>
       <hr class="rule">

@@ -271,7 +271,7 @@ table.rows td.x, table.rows th.x { width: 40px; }
 .brew-tip { background: rgba(4,30,75,.35); border-radius: 12px; padding: 12px 14px; font-size: 14px !important; }
 .brew a { color: #fff; font-weight: 700; }
 @media (prefers-reduced-motion: no-preference) {
-  .brew .spark { transform-box: fill-box; transform-origin: center; animation: twinkle 2.4s ease-in-out infinite; }
+  .brew .spark { transform-box: fill-box; transform-origin: center; animation: twinkle 2.4s ease-in-out 2; }
   .brew .s2 { animation-delay: .8s; } .brew .s3 { animation-delay: 1.6s; }
 }
 @keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.6); } }
