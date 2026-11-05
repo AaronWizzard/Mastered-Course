@@ -5,14 +5,16 @@
 
   const STORE_KEY = "wizzard-pdp-demo-v2";
   const VIEW_KEY = "wizzard-pdp-demo-view";
-  const SECTIONS = ["overview", "goals", "competencies", "role"];
+  const SECTIONS = ["overview", "goals", "competencies", "checkins", "work", "review", "role"];
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const openMonths = {};
 
   // ---------- Saving and loading ----------
   const clone = (o) => JSON.parse(JSON.stringify(o));
   function load() {
     try {
       const saved = localStorage.getItem(STORE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) return Object.assign(clone(DEMO_PLAN), JSON.parse(saved));
     } catch (e) { /* storage unavailable: fall back to the demo data */ }
     return clone(DEMO_PLAN);
   }
@@ -300,6 +302,214 @@
     `;
   }
 
+  // ---------- Small form pieces ----------
+  function inputField(label, path, editable, type, opts) {
+    opts = opts || {};
+    const val = get(path) || "";
+    if (!editable) {
+      const shown = type === "date" ? formatDate(val) : val;
+      return `${label ? `<p class="f ro-label">${esc(label)}</p>` : ""}<div class="ro${shown ? "" : " empty"}">${shown ? esc(shown) : esc(opts.empty || "–")}</div>`;
+    }
+    const id = "f" + (++uid);
+    const aria = label ? "" : ` aria-label="${esc(opts.aria || "")}"`;
+    if (opts.options) {
+      return `${label ? `<label class="f" for="${id}">${esc(label)}</label>` : ""}<select id="${id}" data-path="${path}"${aria}>` +
+        `<option value="">Choose…</option>${opts.options.map((o) => `<option${o === val ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
+    }
+    if (type === "textarea") {
+      return `${label ? `<label class="f" for="${id}">${esc(label)}</label>` : ""}<textarea id="${id}" data-path="${path}" rows="2"${aria} placeholder="${esc(opts.placeholder || "")}">${esc(val)}</textarea>`;
+    }
+    return `${label ? `<label class="f" for="${id}">${esc(label)}</label>` : ""}<input type="${type}" id="${id}" data-path="${path}" value="${esc(val)}"${aria} placeholder="${esc(opts.placeholder || "")}">`;
+  }
+
+  function ownerLabel(isMine, ownerName) {
+    return isMine ? `<small>· you fill this in</small>` : `<small>· filled in by ${esc(ownerName)}</small>`;
+  }
+
+  // ---------- 1:1 Tracker ----------
+  function renderCheckins() {
+    const pr = p();
+    plan.checkins = plan.checkins || {};
+    const recorded = MONTHS.filter((m) => plan.checkins[m] && (plan.checkins[m].summary || plan.checkins[m].actions));
+    const latest = recorded[recorded.length - 1];
+    const months = MONTHS.map((m) => {
+      if (!plan.checkins[m]) plan.checkins[m] = { summary: "", actions: "" };
+      const has = recorded.includes(m);
+      const open = openMonths[m] !== undefined ? openMonths[m] : m === latest;
+      return `<details class="month" data-month="${m}"${open ? " open" : ""}>
+        <summary><span>${m} ${pr.year}</span><span class="filled">${has ? "✓ Recorded" : "Not yet"}</span></summary>
+        <div class="month-body">
+          <div>${inputField("Summary of discussion", `checkins.${m}.summary`, true, "textarea", { placeholder: "What did you talk about?" })}</div>
+          <div>${inputField("Actions and agreements", `checkins.${m}.actions`, true, "textarea", { placeholder: "Who will do what, and by when?" })}</div>
+        </div>
+      </details>`;
+    }).join("");
+
+    document.getElementById("s-checkins").innerHTML = `
+      <h2 id="h-checkins">1:1 <span class="hl">Tracker</span></h2>
+      <hr class="rule">
+      <p class="lede">${isEmp()
+        ? `Your monthly 1:1s with ${esc(pr.manager)}, all in one place. Jot down what you talked about and what you agreed, so nothing gets lost between catch-ups.`
+        : `Your monthly 1:1s with ${esc(pr.firstName)}, all in one place. You can both add to these, so it's a shared record of what you talked about and agreed.`}</p>
+      <div class="card stats-inline"><b>${recorded.length} of 12</b> 1:1s recorded this year. ${recorded.length ? `Latest: ${latest}.` : ""}</div>
+      <div class="months">${months}</div>
+    `;
+  }
+
+  // ---------- Deliverables & Learning ----------
+  function rowsTable(listKey, cols, addLabel, emptyText) {
+    const rows = plan[listKey] || [];
+    const edit = isEmp();
+    const head = cols.map((c) => `<th scope="col" style="width:${c.w || "auto"}">${esc(c.label)}</th>`).join("") + (edit ? `<th scope="col" class="x"><span class="sr">Remove</span></th>` : "");
+    const body = rows.length ? rows.map((r, i) => `<tr>${cols.map((c) =>
+        `<td data-label="${esc(c.label)}">${inputField("", `${listKey}.${i}.${c.key}`, edit, c.type || "textarea", { options: c.options, aria: `${c.label}, row ${i + 1}` })}</td>`).join("")}
+        ${edit ? `<td class="x"><button type="button" data-action="del-row" data-list="${listKey}" data-i="${i}" aria-label="Remove row ${i + 1}">×</button></td>` : ""}</tr>`).join("")
+      : `<tr><td colspan="${cols.length + (edit ? 1 : 0)}" class="muted small">${esc(emptyText)}</td></tr>`;
+    return `<div class="tbl-wrap"><table class="rows"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+      ${edit ? `<button class="btn" type="button" data-action="add-row" data-list="${listKey}">+ ${esc(addLabel)}</button>` : ""}`;
+  }
+
+  function renderWork() {
+    const pr = p();
+    document.getElementById("s-work").innerHTML = `
+      <h2 id="h-work">Deliverables &amp; <span class="hl">learning</span></h2>
+      <hr class="rule">
+      <p class="lede">${isEmp()
+        ? "The work you're proud of and the things you've learned. Add them as they happen, and your evidence will be ready and waiting when review time comes round."
+        : `The work ${esc(pr.firstName)} is proud of and what they've learned. ${esc(pr.firstName)} keeps this up to date, and it's great evidence for your ratings.`}</p>
+      <div class="card">
+        <div class="card-head"><h3>Deliverables and achievements</h3><div class="who-label">${ownerLabel(isEmp(), pr.firstName)}</div></div>
+        ${rowsTable("deliverables", [
+          { key: "project", label: "Project or achievement", w: "34%" },
+          { key: "client", label: "Client", w: "20%", type: "text" },
+          { key: "feedback", label: "Contribution and feedback" }
+        ], "Add a project", "Nothing here yet. Add your first project whenever you're ready.")}
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Training and initiatives</h3><div class="who-label">${ownerLabel(isEmp(), pr.firstName)}</div></div>
+        ${rowsTable("training", [
+          { key: "name", label: "Training or initiative", w: "30%" },
+          { key: "type", label: "Internal or external", w: "16%", options: ["Internal", "External"] },
+          { key: "date", label: "Date", w: "17%", type: "date" },
+          { key: "outcomes", label: "Outcomes" }
+        ], "Add training", "Nothing here yet. Add training as you go.")}
+      </div>
+      <p class="muted small">All clients shown here are made up.</p>
+    `;
+  }
+
+  // ---------- Year in Review ----------
+  function signBox(who, role, key, mine) {
+    const signed = plan.review[key];
+    let inner;
+    if (signed) {
+      inner = `<p class="signed">✓ Agreed on ${formatDate(signed)}</p>` +
+        (mine ? `<button type="button" class="linkbtn" data-action="unsign" data-key="${key}">Undo</button>` : "");
+    } else if (mine) {
+      inner = `<button type="button" class="btn primary" data-action="sign" data-key="${key}">I agree with this review</button>`;
+    } else {
+      inner = `<p class="muted" style="margin:0">Waiting for ${esc(who)}</p>`;
+    }
+    return `<div class="signbox${signed ? " done" : ""}"><h4>${esc(who)} <span style="font-weight:500;opacity:.8">(${role})</span></h4>${inner}</div>`;
+  }
+
+  // The employee sees a holding message until four weeks before the review meeting.
+  const OPEN_DAYS_BEFORE = 28;
+  const DAY = 24 * 60 * 60 * 1000;
+  function todayMidnight() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+  function reviewOpensOn() {
+    if (!plan.review.date) return null;
+    return new Date(new Date(plan.review.date + "T00:00:00").getTime() - OPEN_DAYS_BEFORE * DAY);
+  }
+  function reviewIsOpen() {
+    const opens = reviewOpensOn();
+    return !!opens && todayMidnight() >= opens;
+  }
+  const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  function brewingMessage() {
+    const pr = p();
+    const opens = reviewOpensOn();
+    const days = opens ? Math.round((opens - todayMidnight()) / DAY) : null;
+    return `
+      <h2 id="h-review">Year in <span class="hl">review</span></h2>
+      <hr class="rule">
+      <div class="brew feature">
+        <svg class="brew-art" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <path class="spark s1" d="M84 10 l4 11 11 4 -11 4 -4 11 -4 -11 -11 -4 11 -4z" fill="#fff"/>
+          <path class="spark s2" d="M104 46 l2.5 6.5 6.5 2.5 -6.5 2.5 -2.5 6.5 -2.5 -6.5 -6.5 -2.5 6.5 -2.5z" fill="#FFD1EA"/>
+          <path class="spark s3" d="M58 22 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#fff"/>
+          <rect x="16" y="56" width="74" height="12" rx="6" transform="rotate(-40 53 62)" fill="#041E4B"/>
+          <rect x="66" y="22" width="18" height="12" rx="4" transform="rotate(-40 75 28)" fill="#fff"/>
+          <circle cx="30" cy="96" r="3" fill="#fff" opacity=".7"/><circle cx="44" cy="106" r="2" fill="#fff" opacity=".6"/><circle cx="18" cy="84" r="2.5" fill="#fff" opacity=".6"/>
+        </svg>
+        <div>
+          <p class="comp-kicker">Year in Review</p>
+          <h3>Your Year in Review is on its way, ${esc(pr.firstName)}</h3>
+          <p>We're pulling your year together: your goals, your 1:1s and everything you've achieved over the last twelve months.</p>
+          ${opens ? `
+            <div class="brew-count"><b>${days}</b><span>${days === 1 ? "day" : "days"} to go</span></div>
+            <p>Your review meeting with ${esc(pr.manager)} is on <strong>${formatDate(plan.review.date)}</strong>. Your Year in Review will appear here on <strong>${formatDate(isoOf(opens))}</strong>, about four weeks before, with plenty of time to add your own reflections.</p>`
+          : `<p>Your review meeting hasn't been booked yet. Once ${esc(pr.manager)} sets the date, a countdown will appear here.</p>`}
+          <p class="brew-tip">In the meantime, keep your <a href="#checkins">1:1 Tracker</a> and <a href="#work">Deliverables &amp; Learning</a> up to date. They'll make your review much easier to write.</p>
+        </div>
+      </div>`;
+  }
+
+  function renderReview() {
+    const pr = p();
+    const r = plan.review;
+    const both = r.empSigned && r.mgrSigned;
+    if (isEmp() && !reviewIsOpen()) {
+      document.getElementById("s-review").innerHTML = brewingMessage();
+      return;
+    }
+    const opens = reviewOpensOn();
+    const mgrNote = !isMgr() ? "" : !opens
+      ? `<p class="muted small" style="margin:8px 0 0">Until you set a date, ${esc(pr.firstName)} sees a holding message instead of the review.</p>`
+      : reviewIsOpen()
+        ? `<p class="small" style="margin:8px 0 0"><strong>${esc(pr.firstName)} can now see this review.</strong> It opened on ${formatDate(isoOf(opens))}, four weeks before the meeting.</p>`
+        : `<p class="small" style="margin:8px 0 0">${esc(pr.firstName)} sees a holding message until <strong>${formatDate(isoOf(opens))}</strong>, four weeks before the meeting, so you have time to prepare. <span class="muted">Demo tip: pick a date within four weeks of today, then switch to Employee view to see it open.</span></p>`;
+    document.getElementById("s-review").innerHTML = `
+      <h2 id="h-review">Year in <span class="hl">review</span></h2>
+      <hr class="rule">
+      <p class="lede">${isEmp()
+        ? `A look back at your year. ${esc(pr.manager)} writes a summary, you add your own reflections, and when you've both had your say you sign it off together.`
+        : `Pull together the highlights of ${esc(pr.firstName)}'s year. ${esc(pr.firstName)} adds their own reflections, and when you've both had your say you sign it off together.`}</p>
+
+      <div class="card review-date">
+        ${inputField("Review meeting date", "review.date", isMgr(), "date", { empty: "Not booked yet" })}
+        ${mgrNote}
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Line manager's summary</h3><div class="who-label"><span class="dot mgr"></span>${ownerLabel(isMgr(), pr.manager)}</div></div>
+        ${field("Summary of the year", "review.mgrSummary", isMgr(), { placeholder: "The highlights of their year, and what's next" })}
+        ${field("360 feedback summary", "review.feedback360", isMgr(), { placeholder: "Themes from colleagues' feedback" })}
+      </div>
+
+      <h3 class="subhead" style="font-size:24px">${isEmp() ? "Your reflections" : esc(pr.firstName) + "'s reflections"}</h3>
+      <p class="muted" style="margin:0 0 16px">${isEmp() ? "Add these after reading your manager's summary." : `${esc(pr.firstName)} fills these in.`}</p>
+      <div class="refl">
+        <div class="card">${field("Key accomplishments", "review.accomplishments", isEmp())}</div>
+        <div class="card">${field("Learnings", "review.learnings", isEmp())}</div>
+        <div class="card">${field("Highlights", "review.highlights", isEmp())}</div>
+        <div class="card">${field("Lowlights", "review.lowlights", isEmp())}</div>
+      </div>
+      <div class="card" style="margin-top:16px">${field(isEmp() ? "Your summary" : "Employee summary", "review.summary", isEmp(), { placeholder: "Your year in a few sentences", empty: "Not written yet" })}</div>
+
+      <div class="card ${both ? "feature" : "navy"}" style="margin-top:16px">
+        <h3>Sign-off</h3>
+        <p style="margin:6px 0 14px;font-size:14px">${both ? "Signed off by you both. Here's to next year!" : "Once you've both had your say, each of you confirms you agree."}</p>
+        <div class="sign">
+          ${signBox(pr.firstName, "employee", "empSigned", isEmp())}
+          ${signBox(pr.manager, "line manager", "mgrSigned", isMgr())}
+        </div>
+        <p class="small" style="margin:14px 0 0;opacity:.85">No statement in this review constitutes a guarantee of promotion, compensation, continued employment or any other contractual agreement.</p>
+      </div>
+    `;
+  }
+
   // ---------- Job description ----------
   function renderRole() {
     const jd = JOB_DESCRIPTION;
@@ -347,6 +557,9 @@
     renderOverview();
     renderGoals();
     renderCompetencies();
+    renderCheckins();
+    renderWork();
+    renderReview();
     renderRole();
     showSection();
   }
@@ -374,11 +587,11 @@
 
   document.getElementById("main").addEventListener("input", (e) => {
     const el = e.target;
-    if (el.dataset && el.dataset.path && el.tagName === "TEXTAREA") set(el.dataset.path, el.value);
+    if (el.dataset && el.dataset.path && (el.tagName === "TEXTAREA" || el.tagName === "INPUT")) set(el.dataset.path, el.value);
   });
   document.getElementById("main").addEventListener("change", (e) => {
     const el = e.target;
-    if (el.dataset && el.dataset.path && el.tagName === "SELECT") {
+    if (el.dataset && el.dataset.path && (el.tagName === "SELECT" || el.type === "date")) {
       set(el.dataset.path, el.value);
       const id = el.id;
       renderAll();
@@ -386,6 +599,39 @@
       if (again) again.focus();
     }
   });
+
+  // Buttons for adding and removing rows, and for signing off.
+  document.getElementById("main").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-action]");
+    if (!b) return;
+    const a = b.dataset.action;
+    if (a === "add-row") {
+      const list = b.dataset.list;
+      plan[list] = plan[list] || [];
+      plan[list].push(list === "training" ? { name: "", type: "", date: "", outcomes: "" } : { project: "", client: "", feedback: "" });
+      save();
+      renderAll();
+      const rows = document.querySelectorAll(`[data-path^="${list}.${plan[list].length - 1}."]`);
+      if (rows[0]) rows[0].focus();
+    } else if (a === "del-row") {
+      if (!confirm("Remove this row?")) return;
+      plan[b.dataset.list].splice(Number(b.dataset.i), 1);
+      save();
+      renderAll();
+    } else if (a === "sign" || a === "unsign") {
+      plan.review[b.dataset.key] = a === "sign" ? new Date().toISOString().slice(0, 10) : "";
+      save();
+      renderAll();
+      const again = document.querySelector(`button[data-key="${b.dataset.key}"]`);
+      if (again) again.focus();
+    }
+  });
+
+  // Remember which 1:1 months are open.
+  document.addEventListener("toggle", (e) => {
+    const d = e.target;
+    if (d && d.dataset && d.dataset.month) openMonths[d.dataset.month] = d.open;
+  }, true);
 
   document.getElementById("reset").addEventListener("click", () => {
     if (!confirm("Reset the demo? Any changes you've made in this browser will be cleared.")) return;
