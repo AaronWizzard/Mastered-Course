@@ -413,10 +413,63 @@
     return `<div class="signbox${signed ? " done" : ""}"><h4>${esc(who)} <span style="font-weight:500;opacity:.8">(${role})</span></h4>${inner}</div>`;
   }
 
+  // The employee sees a "brewing" message until four weeks before the review meeting.
+  const OPEN_DAYS_BEFORE = 28;
+  const DAY = 24 * 60 * 60 * 1000;
+  function todayMidnight() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+  function reviewOpensOn() {
+    if (!plan.review.date) return null;
+    return new Date(new Date(plan.review.date + "T00:00:00").getTime() - OPEN_DAYS_BEFORE * DAY);
+  }
+  function reviewIsOpen() {
+    const opens = reviewOpensOn();
+    return !!opens && todayMidnight() >= opens;
+  }
+  const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  function brewingMessage() {
+    const pr = p();
+    const opens = reviewOpensOn();
+    const days = opens ? Math.round((opens - todayMidnight()) / DAY) : null;
+    return `
+      <h2 id="h-review">Year in <span class="hl">review</span></h2>
+      <hr class="rule">
+      <div class="brew feature">
+        <svg class="brew-art" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <path class="spark s1" d="M84 10 l4 11 11 4 -11 4 -4 11 -4 -11 -11 -4 11 -4z" fill="#fff"/>
+          <path class="spark s2" d="M104 46 l2.5 6.5 6.5 2.5 -6.5 2.5 -2.5 6.5 -2.5 -6.5 -6.5 -2.5 6.5 -2.5z" fill="#FFD1EA"/>
+          <path class="spark s3" d="M58 22 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#fff"/>
+          <rect x="16" y="56" width="74" height="12" rx="6" transform="rotate(-40 53 62)" fill="#041E4B"/>
+          <rect x="66" y="22" width="18" height="12" rx="4" transform="rotate(-40 75 28)" fill="#fff"/>
+          <circle cx="30" cy="96" r="3" fill="#fff" opacity=".7"/><circle cx="44" cy="106" r="2" fill="#fff" opacity=".6"/><circle cx="18" cy="84" r="2.5" fill="#fff" opacity=".6"/>
+        </svg>
+        <div>
+          <p class="comp-kicker">Your Year in Review is brewing</p>
+          <h3>Something magical is on its way, ${esc(pr.firstName)}</h3>
+          <p>We're busy conjuring up your year: stirring in your goals, your 1:1s and every sprinkle of brilliance from the last twelve months. A spell this good can't be rushed.</p>
+          ${opens ? `
+            <div class="brew-count"><b>${days}</b><span>${days === 1 ? "day" : "days"} until the spell is ready</span></div>
+            <p>Your review meeting with ${esc(pr.manager)} is on <strong>${formatDate(plan.review.date)}</strong>. Your Year in Review will appear here on <strong>${formatDate(isoOf(opens))}</strong>, about four weeks before, with plenty of time to add your own reflections.</p>`
+          : `<p>Your review meeting hasn't been booked yet. Once ${esc(pr.manager)} sets the date, a countdown will appear here.</p>`}
+          <p class="brew-tip">In the meantime, keep your <a href="#checkins">1:1 Tracker</a> and <a href="#work">Deliverables &amp; Learning</a> up to date. They're the secret ingredients.</p>
+        </div>
+      </div>`;
+  }
+
   function renderReview() {
     const pr = p();
     const r = plan.review;
     const both = r.empSigned && r.mgrSigned;
+    if (isEmp() && !reviewIsOpen()) {
+      document.getElementById("s-review").innerHTML = brewingMessage();
+      return;
+    }
+    const opens = reviewOpensOn();
+    const mgrNote = !isMgr() ? "" : !opens
+      ? `<p class="muted small" style="margin:8px 0 0">Until you set a date, ${esc(pr.firstName)} sees a "brewing" message instead of the review.</p>`
+      : reviewIsOpen()
+        ? `<p class="small" style="margin:8px 0 0"><strong>${esc(pr.firstName)} can now see this review.</strong> It opened on ${formatDate(isoOf(opens))}, four weeks before the meeting.</p>`
+        : `<p class="small" style="margin:8px 0 0">🔮 ${esc(pr.firstName)} sees a "brewing" message until <strong>${formatDate(isoOf(opens))}</strong>, four weeks before the meeting, so you have time to prepare. <span class="muted">Demo tip: pick a date within four weeks of today, then switch to Employee view to see it open.</span></p>`;
     document.getElementById("s-review").innerHTML = `
       <h2 id="h-review">Year in <span class="hl">review</span></h2>
       <hr class="rule">
@@ -426,7 +479,7 @@
 
       <div class="card review-date">
         ${inputField("Review meeting date", "review.date", isMgr(), "date", { empty: "Not booked yet" })}
-        ${isEmp() ? "" : `<p class="muted small" style="margin:8px 0 0">The date shows on the plan for both of you.</p>`}
+        ${mgrNote}
       </div>
 
       <div class="card">
@@ -538,7 +591,7 @@
   });
   document.getElementById("main").addEventListener("change", (e) => {
     const el = e.target;
-    if (el.dataset && el.dataset.path && el.tagName === "SELECT") {
+    if (el.dataset && el.dataset.path && (el.tagName === "SELECT" || el.type === "date")) {
       set(el.dataset.path, el.value);
       const id = el.id;
       renderAll();

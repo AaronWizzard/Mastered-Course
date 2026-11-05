@@ -256,7 +256,25 @@ table.rows td.x, table.rows th.x { width: 40px; }
 .x button:hover { color: var(--pink-ink); background: var(--pink-wash); }
 
 /* Year in Review */
-.review-date { max-width: 320px; }
+.review-date { max-width: 680px; }
+.review-date input { max-width: 260px; }
+
+/* Year in Review: brewing message for the employee */
+.brew { display: grid; grid-template-columns: 140px 1fr; gap: 28px; align-items: center; border-radius: 20px; padding: 32px 36px; max-width: 900px; }
+.brew h3 { font-size: clamp(24px, 3vw, 32px); font-weight: 900; margin: 2px 0 12px; }
+.brew p { margin: 0 0 12px; max-width: 62ch; font-size: 16px; }
+.brew .comp-kicker { color: #fff; opacity: .9; }
+.brew-art { width: 140px; height: 140px; }
+.brew-count { display: flex; align-items: baseline; gap: 10px; margin: 6px 0 14px; }
+.brew-count b { font-family: var(--heading); font-weight: 900; font-size: 56px; line-height: 1; }
+.brew-count span { font-weight: 600; }
+.brew-tip { background: rgba(4,30,75,.35); border-radius: 12px; padding: 12px 14px; font-size: 14px !important; }
+.brew a { color: #fff; font-weight: 700; }
+@media (prefers-reduced-motion: no-preference) {
+  .brew .spark { transform-box: fill-box; transform-origin: center; animation: twinkle 2.4s ease-in-out infinite; }
+  .brew .s2 { animation-delay: .8s; } .brew .s3 { animation-delay: 1.6s; }
+}
+@keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.6); } }
 .review-date .ro-label, .review-date label.f { margin-top: 0; }
 .refl { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .refl .card + .card { margin-top: 0; }
@@ -280,7 +298,9 @@ footer { border-top: 1px solid var(--line); background: var(--paper); }
 }
 @media (max-width: 680px) {
   .wrap { padding: 0 16px; }
-  .month-body, .refl, .sign { grid-template-columns: 1fr; }
+  .month-body, .refl, .sign, .brew { grid-template-columns: 1fr; }
+  .brew { padding: 24px 20px; gap: 12px; }
+  .brew-art { width: 80px; height: 80px; }
   details.month summary, .month-body { padding-left: 16px; padding-right: 16px; }
   table.rows thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   table.rows, table.rows tbody, table.rows tr, table.rows td { display: block; width: auto !important; }
